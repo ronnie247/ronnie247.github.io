@@ -63,13 +63,20 @@ footer{text-align:center;border-top:1px solid var(--border-color);padding:2rem 0
 footer a{color:var(--accent-color);text-decoration:none}
 @media(max-width:900px){.sketch-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.hero{grid-template-columns:1fr}.container{padding:0 1rem}.sketch-grid{grid-template-columns:repeat(2,1fr)}}
+/* Translation */
+#google_translate_element{font-size:.85rem}
+.goog-te-banner-frame{display:none!important}
+body{top:0!important}
+html.translated-rtl body{direction:rtl}
+.logo.logo-plain{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:1.5rem;font-weight:700;-webkit-text-stroke:0}
+#translate-banner{display:none;background:#fff8e1;border-bottom:1px solid #f0e2b0;color:#6b5a1e;text-align:center;font-size:.85rem;padding:.5rem 1rem;margin-top:-3rem;margin-bottom:3rem}
 </style>
 </head>
 <body>
 
 <header>
   <div class="container">
-    <a href="#" class="logo">Dr. Ronnie Mondal</a>
+    <a href="#" class="logo notranslate" translate="no" id="logo-name">Dr. Ronnie Mondal</a>
     <nav>
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
@@ -78,9 +85,11 @@ footer a{color:var(--accent-color);text-decoration:none}
       <a href="#musings">Musings</a>
       <a href="#sketches">Sketches</a>
       <a href="#contact">Contact Me</a>
-    </nav>
-  </div>
+      </nav>
+  <div id="google_translate_element"></div>
+</div>
 </header>
+<div id="translate-banner">This page was translated automatically by Google Translate and may contain errors.</div>
 
 <div class="container">
 
@@ -88,7 +97,7 @@ footer a{color:var(--accent-color);text-decoration:none}
   <section id="about">
     <div class="hero">
       <div>
-        <h1>Ronnie Mondal</h1>
+        <h1 class="notranslate" translate="no" id="hero-name">Ronnie Mondal</h1>
         <div class="subtitle">Your Title / Tagline</div>
         <p>Here is where you add the About Me part. Describe who you are, what you do, and what you are interested in.</p>
         <p>Here is a second paragraph for your current status, goals, or availability.</p>
@@ -274,5 +283,49 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") show(current + 1);
 });
 </script>
+  <script>
+/* ===== TRANSLATION =====
+   Replace each name below with your actual name written in that language/script. */
+const NAMES = {
+  en: "Ronnie Mondal",
+  hi: "रॉनी मंडल",
+  pa: "ਰੌਨੀ ਮੰਡਲ",
+  ur: "رونی منڈل",
+  fr: "Ronnie Mondal",
+  ko: "로니 만달"
+};
+const NON_LATIN = ["hi","pa","ur","ko"];
+
+function applyLang(lang){
+  const code = NAMES[lang] ? lang : "en";
+  document.getElementById("logo-name").textContent = NAMES[code];
+  document.getElementById("hero-name").textContent = NAMES[code];
+  document.getElementById("logo-name").classList.toggle("logo-plain", NON_LATIN.includes(code));
+  document.getElementById("translate-banner").style.display = code === "en" ? "none" : "block";
+}
+
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage: "en",
+    includedLanguages: "en,hi,pa,ur,fr,ko",
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, "google_translate_element");
+
+  // Apply language remembered from a previous visit
+  const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
+  applyLang(m ? m[1] : "en");
+
+  // Wait for the dropdown to appear, then react when it changes
+  const wait = setInterval(() => {
+    const sel = document.querySelector("select.goog-te-combo");
+    if (sel){
+      clearInterval(wait);
+      sel.addEventListener("change", () => applyLang(sel.value || "en"));
+    }
+  }, 300);
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
