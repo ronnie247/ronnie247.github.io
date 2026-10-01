@@ -81,6 +81,8 @@ body{min-height:100%!important}
 header{top:0!important}
 .goog-text-highlight{background:none!important;box-shadow:none!important}
 #lang-select{font-family:inherit;font-size:.85rem;padding:.4rem .6rem;border:1px solid var(--border-color);border-radius:4px;background:var(--card-bg);color:var(--text-color);cursor:pointer}
+#lang-select{position:relative;z-index:60;pointer-events:auto}
+#google_translate_element{pointer-events:none}
 </style>
 </head>
 <body>
@@ -321,10 +323,15 @@ const NON_LATIN = ["hi","pa","ur","ko"];
 
 function applyLang(lang){
   const code = NAMES[lang] ? lang : "en";
-  document.getElementById("logo-name").textContent = NAMES[code];
-  document.getElementById("hero-name").textContent = HERO_NAMES[code];
-  document.getElementById("logo-name").classList.toggle("logo-plain", NON_LATIN.includes(code));
-  document.getElementById("translate-banner").style.display = code === "en" ? "none" : "block";
+  const logo = document.getElementById("logo-name");
+  const hero = document.getElementById("hero-name");
+  const banner = document.getElementById("translate-banner");
+  if (logo){
+    logo.textContent = NAMES[code];
+    logo.classList.toggle("logo-plain", NON_LATIN.includes(code));
+  }
+  if (hero) hero.textContent = HERO_NAMES[code];
+  if (banner) banner.style.display = code === "en" ? "none" : "block";
 }
 
 <script>
@@ -357,15 +364,15 @@ function googleTranslateElementInit(){
   }, "google_translate_element");
 }
 
-
 (function(){
+  const sel = document.getElementById("lang-select");
+  if (!sel) return;
+  sel.addEventListener("change", () => setLang(sel.value));
   const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
   const code = m && NAMES[m[1]] ? m[1] : "en";
-  const sel = document.getElementById("lang-select");
   sel.value = code;
   applyLang(code);
-  sel.addEventListener("change", () => setLang(sel.value));
-})();
+})();  
     
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
