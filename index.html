@@ -291,12 +291,20 @@ const NAMES = {
   fr: "Dr. Ronnie Mondal",
   ko: "로니 몬달 박사"
 };
+const HERO_NAMES = {
+  en: "Ronnie Mondal",
+  hi: "रॉनी मंडल",
+  pa: "ਰੌਨੀ ਮੰਡਲ",
+  ur: "رونی منڈل",
+  fr: "Ronnie Mondal",
+  ko: "로니 몬달"
+};
 const NON_LATIN = ["hi","pa","ur","ko"];
 
 function applyLang(lang){
   const code = NAMES[lang] ? lang : "en";
   document.getElementById("logo-name").textContent = NAMES[code];
-  document.getElementById("hero-name").textContent = NAMES[code];
+  document.getElementById("hero-name").textContent = HERO_NAMES[code];
   document.getElementById("logo-name").classList.toggle("logo-plain", NON_LATIN.includes(code));
   document.getElementById("translate-banner").style.display = code === "en" ? "none" : "block";
 }
