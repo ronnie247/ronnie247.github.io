@@ -80,6 +80,7 @@ html,body{top:0!important;margin-top:0!important;position:static!important}
 body{min-height:100%!important}
 header{top:0!important}
 .goog-text-highlight{background:none!important;box-shadow:none!important}
+#lang-select{font-family:inherit;font-size:.85rem;padding:.4rem .6rem;border:1px solid var(--border-color);border-radius:4px;background:var(--card-bg);color:var(--text-color);cursor:pointer}
 </style>
 </head>
 <body>
@@ -96,7 +97,15 @@ header{top:0!important}
       <a href="#sketches">Sketches</a>
       <a href="#contact">Contact Me</a>
       </nav>
-  <div id="google_translate_element"></div>
+  <select id="lang-select" class="notranslate" translate="no" aria-label="Language">
+  <option value="en">English (Original)</option>
+  <option value="hi">हिंदी (देवनागरी)</option>
+  <option value="pa">ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ)</option>
+  <option value="ur">اردو (نستعلیق)</option>
+  <option value="fr">Français (Latin)</option>
+  <option value="ko">한국어 (한글)</option>
+</select>
+<div id="google_translate_element" style="position:absolute;left:-9999px;top:0"></div>
 </div>
 </header>
 <div id="translate-banner">This page was translated automatically by Google Translate and may contain errors.</div>
@@ -318,68 +327,48 @@ function applyLang(lang){
   document.getElementById("translate-banner").style.display = code === "en" ? "none" : "block";
 }
 
+<script>
+const NAMES = { ... };          // keep
+const HERO_NAMES = { ... };     // keep
+const NON_LATIN = ["hi","pa","ur","ko"];   // keep
+
+function applyLang(lang){ ... } // keep
+
+// ↓ paste the new block here (replaces the whole old googleTranslateElementInit) ↓
+function setLang(code){
+  const past = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  const host = location.hostname;
+  document.cookie = "googtrans=; " + past;
+  document.cookie = "googtrans=; " + past + " domain=" + host + ";";
+  document.cookie = "googtrans=; " + past + " domain=." + host + ";";
+  if (code !== "en"){
+    const v = "/en/" + code;
+    document.cookie = "googtrans=" + v + "; path=/;";
+    document.cookie = "googtrans=" + v + "; path=/; domain=" + host + ";";
+  }
+  location.reload();
+}
+
 function googleTranslateElementInit(){
   new google.translate.TranslateElement({
     pageLanguage: "en",
     includedLanguages: "en,hi,pa,ur,fr,ko",
-    autoDisplay: false,
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    autoDisplay: false
   }, "google_translate_element");
-
-  // Apply language remembered from a previous visit
-  const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
-  applyLang(m ? m[1] : "en");
-
-      // Wait for the dropdown to appear, relabel it, then react when it changes
-  const LABELS = {
-    en: "English (Original)",
-    hi: "हिंदी (देवनागरी)",
-    pa: "ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ)",
-    ur: "اردو (نستعلیق)",
-    fr: "French (Latin)",
-    ko: "한국어 (한글)"
-  };
-  function relabel(sel){
-    // Google leaves out the page's own language, so add it back
-    if (!Array.from(sel.options).some(o => o.value === "en")){
-      const opt = document.createElement("option");
-      opt.value = "en";
-      opt.text = LABELS.en;
-      sel.insertBefore(opt, sel.options[1] || null);
-    }
-    Array.from(sel.options).forEach(o => {
-      if (LABELS[o.value] && o.text !== LABELS[o.value]) o.text = LABELS[o.value];
-    });
-  }
-  function resetToEnglish(){
-    const past = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    const host = location.hostname;
-    document.cookie = "googtrans=; " + past;
-    document.cookie = "googtrans=; " + past + " domain=" + host + ";";
-    document.cookie = "googtrans=; " + past + " domain=." + host + ";";
-    location.reload();
-  }
-  const wait = setInterval(() => {
-    const sel = document.querySelector("select.goog-te-combo");
-    if (sel){
-      clearInterval(wait);
-      relabel(sel);
-      // Google sometimes rebuilds the options, so re-apply when that happens
-      new MutationObserver(() => relabel(sel)).observe(sel, {childList:true, subtree:true, characterData:true});
-      // Runs before Google's own handler so "English" can restore the original page
-      sel.addEventListener("change", (e) => {
-        if (sel.value === "en"){
-          e.stopImmediatePropagation();
-          resetToEnglish();
-          return;
-        }
-        applyLang(sel.value || "en");
-      }, true);
-    }
-  }, 300);
 }
+
+
+(function(){
+  const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
+  const code = m && NAMES[m[1]] ? m[1] : "en";
+  const sel = document.getElementById("lang-select");
+  sel.value = code;
+  applyLang(code);
+  sel.addEventListener("change", () => setLang(sel.value));
+})();
     
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
