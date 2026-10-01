@@ -330,19 +330,9 @@ function googleTranslateElementInit(){
   const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
   applyLang(m ? m[1] : "en");
 
-//   // Wait for the dropdown to appear, then react when it changes
-//   const wait = setInterval(() => {
-//     const sel = document.querySelector("select.goog-te-combo");
-//     if (sel){
-//       clearInterval(wait);
-//       sel.addEventListener("change", () => applyLang(sel.value || "en"));
-//     }
-//   }, 300);
-// }
-
-    // Wait for the dropdown to appear, relabel it, then react when it changes
+      // Wait for the dropdown to appear, relabel it, then react when it changes
   const LABELS = {
-    en: "English (Latin)",
+    en: "English (Original)",
     hi: "हिंदी (देवनागरी)",
     pa: "ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ)",
     ur: "اردو (نستعلیق)",
@@ -350,9 +340,24 @@ function googleTranslateElementInit(){
     ko: "한국어 (한글)"
   };
   function relabel(sel){
+    // Google leaves out the page's own language, so add it back
+    if (!Array.from(sel.options).some(o => o.value === "en")){
+      const opt = document.createElement("option");
+      opt.value = "en";
+      opt.text = LABELS.en;
+      sel.insertBefore(opt, sel.options[1] || null);
+    }
     Array.from(sel.options).forEach(o => {
       if (LABELS[o.value] && o.text !== LABELS[o.value]) o.text = LABELS[o.value];
     });
+  }
+  function resetToEnglish(){
+    const past = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    const host = location.hostname;
+    document.cookie = "googtrans=; " + past;
+    document.cookie = "googtrans=; " + past + " domain=" + host + ";";
+    document.cookie = "googtrans=; " + past + " domain=." + host + ";";
+    location.reload();
   }
   const wait = setInterval(() => {
     const sel = document.querySelector("select.goog-te-combo");
@@ -361,7 +366,15 @@ function googleTranslateElementInit(){
       relabel(sel);
       // Google sometimes rebuilds the options, so re-apply when that happens
       new MutationObserver(() => relabel(sel)).observe(sel, {childList:true, subtree:true, characterData:true});
-      sel.addEventListener("change", () => applyLang(sel.value || "en"));
+      // Runs before Google's own handler so "English" can restore the original page
+      sel.addEventListener("change", (e) => {
+        if (sel.value === "en"){
+          e.stopImmediatePropagation();
+          resetToEnglish();
+          return;
+        }
+        applyLang(sel.value || "en");
+      }, true);
     }
   }, 300);
 }
