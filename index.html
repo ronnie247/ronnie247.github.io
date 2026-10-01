@@ -334,14 +334,6 @@ function applyLang(lang){
   if (banner) banner.style.display = code === "en" ? "none" : "block";
 }
 
-<script>
-const NAMES = { ... };          // keep
-const HERO_NAMES = { ... };     // keep
-const NON_LATIN = ["hi","pa","ur","ko"];   // keep
-
-function applyLang(lang){ ... } // keep
-
-// ↓ paste the new block here (replaces the whole old googleTranslateElementInit) ↓
 function setLang(code){
   const past = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   const host = location.hostname;
