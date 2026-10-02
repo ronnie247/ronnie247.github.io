@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ronnie in the News</title>
+<script>try{var t=localStorage.getItem("theme");if(!t&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="theme.css">
+<style>
+.news-card{display:grid;grid-template-columns:220px 1fr;gap:1.25rem;color:inherit;text-decoration:none;padding:0;overflow:hidden}
+.news-card:hover{border-color:var(--accent-color)}
+.news-img{background:var(--border-color) center/cover no-repeat;min-height:140px}
+.news-body{padding:1.25rem 1.25rem 1.25rem 0}
+.news-body h3{margin-bottom:.25rem}
+.news-desc{color:var(--text-color);opacity:.8;font-size:.95rem;margin:.25rem 0 .75rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.news-link{color:var(--accent-color);font-size:.85rem}
+@media(max-width:700px){.news-card{grid-template-columns:1fr}.news-body{padding:0 1.25rem 1.25rem}.news-img{min-height:160px}}
+</style>
+</head>
+<body data-translate>
+<header>
+  <div class="container">
+    <a href="index.html" class="btn btn-outline">&larr; Back</a>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</header>
+<div id="translate-banner">This page was translated automatically by Google Translate and may contain errors.</div>
+<div class="container">
+  <section>
+    <h2>Ronnie in the News</h2>
+    <div class="notranslate" translate="no" id="news"></div>
+  </section>
+</div>
+<footer><div class="container"><p>© 2026 Ronnie Mondal</p></div></footer>
+<div id="google_translate_element" style="position:absolute;left:-9999px;top:0"></div>
+<script>
+/* ===== YOUR NEWS LIST =====
+   Add each new article as a new line at the BOTTOM of this list (in the order you add them).
+   The page shows the newest (last) one on top automatically.
+   Optional extras per entry: image:"https://...", description:"..." (used instead of the auto preview). */
+const NEWS = [
+  { title: "News Article Title #1", url: "https://example.com/article-1" },
+  { title: "News Article Title #2", url: "https://example.com/article-2" }
+];
+
+const box = document.getElementById("news");
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const host = u => { try { return new URL(u).hostname.replace(/^www\./,""); } catch(e){ return u; } };
+
+async function preview(item){
+  if(item.image || item.description) return {image:item.image, description:item.description};
+  const key = "newsprev:" + item.url;
+  try{ const c = localStorage.getItem(key); if(c) return JSON.parse(c); }catch(e){}
+  try{
+    const r = await fetch("https://api.microlink.io/?url=" + encodeURIComponent(item.url));
+    const j = await r.json();
+    if(j.status !== "success") return {};
+    const p = {image:j.data.image && j.data.image.url, description:j.data.description, publisher:j.data.publisher};
+    try{ localStorage.setItem(key, JSON.stringify(p)); }catch(e){}
+    return p;
+  }catch(e){ return {}; }
+}
+
+NEWS.slice().reverse().forEach(item => {
+  const a = document.createElement("a");
+  a.className = "card news-card";
+  a.href = item.url; a.target = "_blank"; a.rel = "noopener";
+  a.innerHTML = "<div class='news-img'></div><div class='news-body'><h3>" + esc(item.title) +
+    "</h3><p class='meta'>" + esc(host(item.url)) + "</p><p class='news-desc'></p><span class='news-link'>Read article →</span></div>";
+  box.appendChild(a);
+  preview(item).then(p => {
+    if(p.image) a.querySelector(".news-img").style.backgroundImage = "url('" + p.image.replace(/'/g,"%27") + "')";
+    else a.querySelector(".news-img").style.display = "none", a.style.gridTemplateColumns = "1fr", a.querySelector(".news-body").style.padding = "1.25rem";
+    if(p.description) a.querySelector(".news-desc").textContent = p.description; else a.querySelector(".news-desc").remove();
+    if(p.publisher) a.querySelector(".meta").textContent = p.publisher + " · " + host(item.url);
+  });
+});
+</script>
+<script src="site.js"></script>
+</body>
+</html>

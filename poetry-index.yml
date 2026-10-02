@@ -1,0 +1,40 @@
+name: Update poetry index
+
+on:
+  push:
+    paths:
+      - 'poetry/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build poetry/index.json (newest first)
+        run: |
+          python3 - <<'EOF'
+          import json, os, subprocess
+          items = []
+          for f in os.listdir('poetry'):
+              if f.lower().endswith(('.txt', '.md')):
+                  out = subprocess.run(['git', 'log', '--diff-filter=A', '--format=%aI', '--', 'poetry/' + f],
+                                       capture_output=True, text=True).stdout.split()
+                  items.append({'file': f, 'added': out[-1] if out else ''})
+          items.sort(key=lambda x: (x['added'], x['file']), reverse=True)
+          json.dump(items, open('poetry/index.json', 'w'), indent=1)
+          EOF
+      - name: Commit index
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add poetry/index.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update poetry index"
+            git push
+          fi
