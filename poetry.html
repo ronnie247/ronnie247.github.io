@@ -7,6 +7,17 @@
 <script>try{var t=localStorage.getItem("theme");if(!t&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="stylesheet" href="subpage.css">
 <link rel="stylesheet" href="theme.css">
+<style>
+.poem{cursor:pointer}
+.poem-text{white-space:pre-wrap;line-height:1.75;color:var(--text-color);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.poem.open{border-color:var(--accent-color);cursor:default}
+.poem.open .poem-text{display:block;overflow:visible}
+.poem .more{color:var(--accent-color);font-size:.85rem;margin-top:.75rem}
+.poem.open .more{display:none}
+.poem:not(.open) .tr{display:none}
+.tr{margin-top:1rem}
+.tr-btn{padding:.35rem .8rem;font-size:.85rem}
+</style>
 </head>
 <body data-translate>
 <header>
@@ -18,15 +29,79 @@
 <div id="translate-banner">This page was translated automatically by Google Translate and may contain errors.</div>
 <div class="container">
   <section>
-    <h2>Poetry by Ronnie as <em>Shehreyar</em> </h2>
-    <div class="notranslate" translate="no">
-      <div class="card"><h3>Poem Title #1</h3><p class="meta">Date</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p></div>
-      <div class="card"><h3>Poem Title #2</h3><p class="meta">Date</p><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></div>
-    </div>
+    <h2>Poetry by Ronnie as <em>Shehreyar</em></h2>
+    <div class="notranslate" translate="no" id="poems"><p>Loading poems…</p></div>
   </section>
 </div>
 <footer><div class="container"><p>© 2026 Ronnie Mondal</p></div></footer>
 <div id="google_translate_element" style="position:absolute;left:-9999px;top:0"></div>
+<script>
+/* Poems are read from the poetry/ folder. poetry/index.json is generated automatically
+   by the GitHub Action (newest first), so you only ever add .txt / .md files. */
+const box = document.getElementById("poems");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\*)(.+?)\*/g,"$1<em>$2</em>");
+const nice = f => f.replace(/\.(md|txt)$/i,"").replace(/_+/g," ").trim();
+
+async function loadPoem(item){
+  try{
+    const r = await fetch("poetry/" + encodeURIComponent(item.file), {cache:"no-cache"});
+    if(!r.ok) return null;
+    let text = (await r.text()).replace(/\r\n/g,"\n").trim();
+    let title = nice(item.file);
+    const m = text.match(/^#\s+(.+)\n?/);           // optional "# Title" first line overrides file name
+    if(m){ title = m[1].trim(); text = text.slice(m[0].length).trim(); }
+    return {title, text, md:/\.md$/i.test(item.file), added:item.added};
+  }catch(e){ return null; }
+}
+
+fetch("poetry/index.json", {cache:"no-cache"})
+  .then(r => { if(!r.ok) throw 0; return r.json(); })
+  .then(async list => {
+    const poems = (await Promise.all(list.map(loadPoem))).filter(Boolean);
+    if(!poems.length){ box.innerHTML = "<p>No poems yet.</p>"; return; }
+    box.textContent = "";
+    poems.forEach(p => {
+      const card = document.createElement("article");
+      card.className = "card poem";
+      card.tabIndex = 0;
+      const date = p.added ? new Date(p.added).toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"}) : "";
+      card.innerHTML = "<h3 dir='auto'>" + esc(p.title) + "</h3><p class='meta'>" + date + "</p><div class='poem-text' dir='auto'>" +
+        (p.md ? md(p.text) : esc(p.text)) + "</div><div class='more'>Read more ↓</div>" +
+        "<div class='tr'><button type='button' class='btn btn-outline tr-btn'>Translate ↗</button></div>";
+      card._title = p.title; card._text = p.text;
+      box.appendChild(card);
+    });
+  })
+  .catch(() => { box.innerHTML = "<p>Poems could not be loaded yet.</p>"; });
+
+// Translate on request: opens Google Translate with the poem (language = the site language you chose, else English)
+function translatePoem(card, btn){
+  const m = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
+  const tl = m && m[1] ? m[1] : "en";
+  const text = card._title + "\n\n" + card._text;
+  const base = "https://translate.google.com/?sl=auto&tl=" + tl + "&op=translate";
+  const url = base + "&text=" + encodeURIComponent(text);
+  if(url.length < 7000){ window.open(url, "_blank", "noopener"); return; }
+  // Very long poem: copy the text, then paste it into Google Translate
+  if(navigator.clipboard) navigator.clipboard.writeText(text);
+  window.open(base, "_blank", "noopener");
+  btn.textContent = "Copied – paste it into Google Translate";
+}
+
+// Click a poem to expand it; click anywhere else to collapse
+document.addEventListener("click", e => {
+  const hit = e.target.closest(".poem");
+  const tb = e.target.closest(".tr-btn");
+  if(tb && hit) translatePoem(hit, tb);
+  document.querySelectorAll(".poem.open").forEach(c => { if(c !== hit) c.classList.remove("open"); });
+  if(hit) hit.classList.add("open");
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape") document.querySelectorAll(".poem.open").forEach(c => c.classList.remove("open"));
+  if(e.key === "Enter" && e.target.classList && e.target.classList.contains("poem")) e.target.classList.add("open");
+});
+</script>
 <script src="site.js"></script>
 </body>
 </html>
