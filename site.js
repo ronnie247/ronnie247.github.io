@@ -33,4 +33,11 @@
       document.head.appendChild(s);
     }
   }
+  // Fancy name in the sub-page header (follows the language chosen on the home page)
+  var logo = document.querySelector(".sub-logo");
+  if (logo){
+    var LOGO_NAMES = {hi:"डॉ. रॉनी मंडल", pa:"ਡਾ. ਰੌਨੀ ਮੰਡਲ", ur:"ڈاکٹر رونی منڈل", ko:"로니 몬달 박사"};
+    var lm = document.cookie.match(/googtrans=\/[a-zA-Z-]+\/([a-zA-Z-]+)/);
+    if (lm && LOGO_NAMES[lm[1]]){ logo.textContent = LOGO_NAMES[lm[1]]; logo.classList.add("logo-plain"); }
+  }
 })();
