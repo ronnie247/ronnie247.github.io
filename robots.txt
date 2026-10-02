@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ronnie247.github.io/sitemap.xml
