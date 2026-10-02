@@ -45,3 +45,11 @@ const sketches = [
 # Education Template
 
 <div class="card"><h3>Degree / Qualification #1</h3><p class="meta">Institution #1 · Start — End</p><p>Short description of your studies or thesis.</p></div>
+
+
+# Certificates Template
+
+const CERTS = [
+  { title: "Certificate Title #1", url: "https://example.com/certificate-1" },
+  { title: "Certificate Title #2", url: "https://example.com/certificate-2" }   // newest last
+];
