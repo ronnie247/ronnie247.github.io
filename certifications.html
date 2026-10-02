@@ -40,12 +40,31 @@
 <div id="google_translate_element" style="position:absolute;left:-9999px;top:0"></div>
 <script>
 /* ===== YOUR CERTIFICATIONS LIST =====
-   Add each new certificate as a new line at the BOTTOM of this list (in the order you add them).
-   The page shows the newest (last) one on top automatically.
-   Optional extras per entry: image:"https://...", description:"..." (used instead of the auto preview). */
+   Newest first: the page shows them in exactly this order, so add each new certificate at the TOP of the list.
+   Fields: title, url, meta (the line under the title, e.g. issuer and date).
+   Optional: image:"https://...", description:"..." (used instead of the auto preview). */
 const CERTS = [
-  { title: "Certificate Title #1", url: "https://example.com/certificate-1" },
-  { title: "Certificate Title #2", url: "https://example.com/certificate-2" }
+  { title: "McKinsey Forward Program: Analytics, Problem-solving, and Leadership",
+    url: "https://www.credly.com/badges/cb0b14db-1385-4b53-b825-1bf861ab8fe1/linked_in_profile",
+    meta: "McKinsey & Co · Dec 2025" },
+  { title: "Introduction to Computational Antibody Engineering",
+    url: "https://courses.schrodinger.com/certificates/kge5ll6pyv",
+    meta: "Schrödinger · Jun 2024" },
+  { title: "Visualizing Science with PyMOL3",
+    url: "https://courses.schrodinger.com/certificates/rf0vjykfw9",
+    meta: "Schrödinger · Jun 2024" },
+  { title: "New Manager Foundations",
+    url: "https://www.linkedin.com/learning/certificates/fe908085470d20bf7ccb804bfbc8316dabe9bea231bc570358fb5735e531d1f5",
+    meta: "LinkedIn Learning · Jul 2022" },
+  { title: "SQL Essential Training",
+    url: "https://www.linkedin.com/learning/certificates/70cb99d055da6b7e5c38d8b25e03194c35346212ded0f88345b2d361661a5159",
+    meta: "LinkedIn Learning · Aug 2020" },
+  { title: "Social Media Marketing: Strategy and Optimization",
+    url: "https://www.linkedin.com/learning/certificates/d608581a51f02c1441774c9f779c63da2b79df919ff332e36125eebdf5cbe228",
+    meta: "LinkedIn Learning · Mar 2020" },
+  { title: "Make the Move from Individual Contributor to Manager",
+    url: "https://www.linkedin.com/learning/certificates/1b8e4da388715a1e022036a1232b556d7f523adc5414886c1eb90d6305539eef",
+    meta: "LinkedIn Learning · Feb 2020" }
 ];
 
 const box = document.getElementById("news");
@@ -66,18 +85,18 @@ async function preview(item){
   }catch(e){ return {}; }
 }
 
-CERTS.slice().reverse().forEach(item => {
+CERTS.forEach(item => {
   const a = document.createElement("a");
   a.className = "card news-card";
   a.href = item.url; a.target = "_blank"; a.rel = "noopener";
   a.innerHTML = "<div class='news-img'></div><div class='news-body'><h3>" + esc(item.title) +
-    "</h3><p class='meta'>" + esc(host(item.url)) + "</p><p class='news-desc'></p><span class='news-link'>View certificate →</span></div>";
+    "</h3><p class='meta'>" + esc(item.meta || host(item.url)) + "</p><p class='news-desc'></p><span class='news-link'>View certificate →</span></div>";
   box.appendChild(a);
   preview(item).then(p => {
     if(p.image) a.querySelector(".news-img").style.backgroundImage = "url('" + p.image.replace(/'/g,"%27") + "')";
     else a.querySelector(".news-img").style.display = "none", a.style.gridTemplateColumns = "1fr", a.querySelector(".news-body").style.padding = "1.25rem";
     if(p.description) a.querySelector(".news-desc").textContent = p.description; else a.querySelector(".news-desc").remove();
-    if(p.publisher) a.querySelector(".meta").textContent = p.publisher + " · " + host(item.url);
+    if(p.publisher && !item.meta) a.querySelector(".meta").textContent = p.publisher + " · " + host(item.url);
   });
 });
 </script>
