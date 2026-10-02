@@ -180,7 +180,7 @@ Poetry needs `poetry/index.json`, which only exists after the GitHub Action has 
 ## Security notes
 
 - The site is static: no logins, forms, databases or server code, so the main risk is access to the GitHub account.
-- Two-factor authentication is enabled on the GitHub account; keep recovery codes safe.
+<!-- - Two-factor authentication is enabled on the GitHub account; keep recovery codes safe.-->
 - No collaborators have write access. Do not commit passwords or API keys.
 - Text from poems, news titles and certificates is escaped before display; external links use `rel="noopener"`.
 - Third-party services loaded by the site: Google Fonts, Google Translate, and Microlink (link previews).
