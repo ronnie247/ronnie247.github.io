@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sketches — Dr. Ronnie Mondal</title>
+<script>try{var t=localStorage.getItem("theme");if(!t&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body data-translate>
+<header>
+  <div class="container">
+    <a href="index.html" class="btn btn-outline">&larr; Back</a>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</header>
+<div id="translate-banner">This page was translated automatically by Google Translate and may contain errors.</div>
+<div class="container">
+  <section>
+    <h2>Sketches</h2>
+    <div class="sketch-grid notranslate" translate="no" id="sketch-grid"></div>
+    <div class="btn-group" style="justify-content:center"><button class="btn" id="load-more">Load more</button></div>
+  </section>
+</div>
+<footer><div class="container"><p>© 2026 Dr. Ronnie Mondal</p></div></footer>
+<div id="google_translate_element" style="position:absolute;left:-9999px;top:0"></div>
+<div id="lightbox" aria-modal="true" role="dialog">
+  <button id="lb-close" aria-label="Close">&times;</button>
+  <button id="lb-prev" aria-label="Previous">&#8249;</button>
+  <img id="lb-img" alt="">
+  <button id="lb-next" aria-label="Next">&#8250;</button>
+</div>
+<script>
+/* Put images in the "sketches" folder, then paste the file names into this list. */
+const sketches = [
+  "sketch1.jpg","sketch2.jpg","sketch3.jpg","sketch4.jpg"
+];
+const PAGE = 12;
+const grid = document.getElementById("sketch-grid");
+const moreBtn = document.getElementById("load-more");
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+let current = 0, shown = 0;
+function loadMore(){
+  sketches.slice(shown, shown + PAGE).forEach((file, k) => {
+    const i = shown + k;
+    const b = document.createElement("button");
+    b.setAttribute("aria-label", "Open sketch " + (i + 1));
+    const img = document.createElement("img");
+    img.src = "sketches/" + encodeURI(file);
+    img.loading = "lazy";
+    img.alt = "Sketch " + (i + 1);
+    b.appendChild(img);
+    b.onclick = () => show(i);
+    grid.appendChild(b);
+  });
+  shown = Math.min(shown + PAGE, sketches.length);
+  moreBtn.textContent = "Load more (" + (sketches.length - shown) + " left)";
+  if (shown >= sketches.length) moreBtn.style.display = "none";
+}
+moreBtn.onclick = loadMore;
+loadMore();
+function show(i){
+  current = (i + sketches.length) % sketches.length;
+  lbImg.src = "sketches/" + encodeURI(sketches[current]);
+  lb.classList.add("open");
+}
+function close(){ lb.classList.remove("open"); }
+document.getElementById("lb-close").onclick = close;
+document.getElementById("lb-prev").onclick = () => show(current - 1);
+document.getElementById("lb-next").onclick = () => show(current + 1);
+lb.onclick = e => { if (e.target === lb) close(); };
+document.addEventListener("keydown", e => {
+  if (!lb.classList.contains("open")) return;
+  if (e.key === "Escape") close();
+  if (e.key === "ArrowLeft") show(current - 1);
+  if (e.key === "ArrowRight") show(current + 1);
+});
+</script>
+<script src="site.js"></script>
+</body>
+</html>
