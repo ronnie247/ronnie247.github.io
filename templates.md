@@ -53,3 +53,11 @@ const CERTS = [
   { title: "Certificate Title #1", url: "https://example.com/certificate-1" },
   { title: "Certificate Title #2", url: "https://example.com/certificate-2" }   // newest last
 ];
+
+# Awards Template
+
+<div class="card">
+  <h3>Award Title</h3>
+  <p class="meta">Awarding Organization · Year</p>
+  <p>Short description of the award and what it recognized.</p>
+</div>
