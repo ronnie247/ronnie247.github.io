@@ -52,9 +52,11 @@ async function loadPoem(item){
     const r = await fetch("poetry/" + encodeURIComponent(item.file), {cache:"no-cache"});
     if(!r.ok) return null;
     let text = (await r.text()).replace(/\r\n/g,"\n").trim();
+    if(/\.md$/i.test(item.file)) text = text.replace(/^>[ \t]?/gm, "").trim();
     let title = nice(item.file);
     const m = text.match(/^#\s+(.+)\n?/);           // optional "# Title" first line overrides file name
     if(m){ title = m[1].trim(); text = text.slice(m[0].length).trim(); }
+    text = text.replace(/^lang:[^\n]*\n?/i, "").trim();   // hide an optional "lang: xx" line
     return {title, text, md:/\.md$/i.test(item.file), added:item.added};
   }catch(e){ return null; }
 }
