@@ -3,6 +3,8 @@
 Source code for my personal academic and professional website, hosted free on **GitHub Pages**:
 **https://ronnie247.github.io/**
 
+Last Updated: October 4, 2026
+
 It is a fully static site (plain HTML, CSS and JavaScript). There is no server, database, build step or framework, so everything can be edited directly in the GitHub web editor.
 
 ---
