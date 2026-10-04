@@ -19,13 +19,20 @@ jobs:
       - name: Build poetry/index.json (newest first)
         run: |
           python3 - <<'EOF'
-          import json, os, subprocess
+          import json, os, re, subprocess
+          from datetime import datetime, timezone
           items = []
           for f in os.listdir('poetry'):
-              if f.lower().endswith(('.txt', '.md')):
-                  out = subprocess.run(['git', 'log', '--diff-filter=A', '--format=%aI', '--', 'poetry/' + f],
+              if not f.lower().endswith(('.txt', '.md')):
+                  continue
+              m = re.match(r'(\d{4})-(\d{2})-(\d{2})[_ -]', f)
+              if m:   # a date typed at the start of the file name wins
+                  d = datetime(int(m[1]), int(m[2]), int(m[3]), 12, 0, tzinfo=timezone.utc)
+              else:   # otherwise: when the file was first committed
+                  out = subprocess.run(['git', 'log', '--diff-filter=A', '--format=%at', '--', 'poetry/' + f],
                                        capture_output=True, text=True).stdout.split()
-                  items.append({'file': f, 'added': out[-1] if out else ''})
+                  d = datetime.fromtimestamp(int(out[-1]), tz=timezone.utc) if out else datetime(1970, 1, 1, tzinfo=timezone.utc)
+              items.append({'file': f, 'added': d.strftime('%Y-%m-%dT%H:%M:%SZ')})
           items.sort(key=lambda x: (x['added'], x['file']), reverse=True)
           json.dump(items, open('poetry/index.json', 'w'), indent=1)
           EOF
