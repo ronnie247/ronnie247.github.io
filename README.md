@@ -114,6 +114,8 @@ Template:
 ```markdown
 # Poem Title
 
+lang: hi or en or ur or fr or kr
+
 First line of the first stanza
 Second line of the first stanza
 
