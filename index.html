@@ -121,6 +121,30 @@ header{top:0!important}
 #lang-select{font-family:inherit;font-size:.85rem;padding:.4rem .6rem;border:1px solid var(--border-color);border-radius:4px;background:var(--card-bg);color:var(--text-color);cursor:pointer}
 #lang-select{position:relative;z-index:60;pointer-events:auto}
 #google_translate_element{pointer-events:none}
+/* Languages Grid Styling - Formatted to match Contact section cards */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;}
+.lang-card {
+  padding: 1rem 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: var(--transition);}
+.lang-card:hover {
+  border-color: var(--accent-color);}
+.lang-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 0.2rem;}
+.lang-level {
+  font-size: 0.85rem;
+  color: #666;}
+@media (max-width: 700px) {
+  .lang-grid {
+    grid-template-columns: 1fr;}}
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
