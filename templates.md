@@ -2,6 +2,7 @@
 
 ## Tilte
 
+```
 Add a line - lang: hi
 
 > Indented
@@ -9,19 +10,22 @@ Add a line - lang: hi
 > Next stanza
 
 *#ShehreyarWrites*
-
+```
 
 *Italic* and **bold** also work, if you need them.
 
 # News Article Template
 
+```
 const NEWS = [
   { title: "First article title", url: "https://example.com/article-1" },
   { title: "Second article title", url: "https://example.com/article-2" }   // newest last
 ];
+```
 
 # Publication Template
 
+```
 <div class="card">
   <h3>Publication Title #1</h3>
   <p class="meta">Author 1, Author 2, <strong>Your Name</strong> · Journal / Conference · Year</p>
@@ -32,24 +36,31 @@ const NEWS = [
     <a class="btn btn-outline" href="https://github.com/your-username/your-code-repo" target="_blank" rel="noopener">Code</a>
   </div>
 </div>
-
+```
 
 # Sketches Template
 
+```
 const sketches = [
   "sketch1.jpg","sketch2.jpg","sketch3.jpg","sketch4.jpg"
 ];
+```
 
 # Experience Template
 
+```
 <div class="card"><h3>Job Title #1</h3><p class="meta">Company Name #1 · Start — End</p><p>Description of your role and achievements goes here.</p></div>
+```
 
 # Education Template
 
+```
 <div class="card"><h3>Degree / Qualification #1</h3><p class="meta">Institution #1 · Start — End</p><p>Short description of your studies or thesis.</p></div>
+```
 
 # Languages Template
 
+```
 <div class="lang-card">
   <div class="lang-title">Language 1</div>
   <div class="lang-level">Proficiency Level</div>
@@ -62,18 +73,23 @@ const sketches = [
   <div class="lang-title">Language 3</div>
   <div class="lang-level">Proficiency Level</div>
 </div>
+```
 
 # Certificates Template
 
+```
 const CERTS = [
   { title: "Certificate Title #1", url: "https://example.com/certificate-1" },
   { title: "Certificate Title #2", url: "https://example.com/certificate-2" }   // newest last
 ];
+```
 
 # Awards Template
 
+```
 <div class="card">
   <h3>Award Title</h3>
   <p class="meta">Awarding Organization · Year</p>
   <p>Short description of the award and what it recognized.</p>
 </div>
+```
