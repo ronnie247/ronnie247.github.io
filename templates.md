@@ -50,20 +50,18 @@ const sketches = [
 
 # Languages Template
 
-<tr>
-  <td>
-    <div class="lang-title">Language 1</div>
-    <div class="lang-level">Proficiency level</div>
-  </td>
-  <td>
-    <div class="lang-title">Language 2</div>
-    <div class="lang-level">Proficiency level</div>
-  </td>
-  <td>
-    <div class="lang-title">Language 3</div>
-    <div class="lang-level">Proficiency level</div>
-  </td>
-</tr>
+<div class="lang-card">
+  <div class="lang-title">Language 1</div>
+  <div class="lang-level">Proficiency Level</div>
+</div>
+<div class="lang-card">
+  <div class="lang-title">Language 2</div>
+  <div class="lang-level">Proficiency Level</div>
+</div>
+<div class="lang-card">
+  <div class="lang-title">Language 3</div>
+  <div class="lang-level">Proficiency Level</div>
+</div>
 
 # Certificates Template
 
