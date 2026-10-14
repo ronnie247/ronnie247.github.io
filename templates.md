@@ -48,6 +48,22 @@ const sketches = [
 
 <div class="card"><h3>Degree / Qualification #1</h3><p class="meta">Institution #1 · Start — End</p><p>Short description of your studies or thesis.</p></div>
 
+# Languages Template
+
+<tr>
+  <td>
+    <div class="lang-title">Language 1</div>
+    <div class="lang-level">Proficiency level</div>
+  </td>
+  <td>
+    <div class="lang-title">Language 2</div>
+    <div class="lang-level">Proficiency level</div>
+  </td>
+  <td>
+    <div class="lang-title">Language 3</div>
+    <div class="lang-level">Proficiency level</div>
+  </td>
+</tr>
 
 # Certificates Template
 
